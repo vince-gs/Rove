@@ -5,8 +5,9 @@ import android.content.Intent;
 import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.location.Location;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -40,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     @BindView(R.id.compass_arrow) ImageView arrow;
     @BindView(R.id.distance) TextView distance;
     @BindView(R.id.status_message) TextView status;
+    @BindView(R.id.cancel_action) TextView cancel;
 
     private FusedLocationProviderClient locationClient;
     private LocationRequest locationRequest;
@@ -51,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
         @Override
         public void onLocationAvailability(LocationAvailability locationAvailability) {
             if(!locationAvailability.isLocationAvailable()){
+                //this will trigger after prolonged periods of no location available, even if we already got one
                 onLocationError();
             }
         }
@@ -75,11 +78,17 @@ public class MainActivity extends AppCompatActivity {
         locationClient = LocationServices.getFusedLocationProviderClient(this);
 
         //for now, assuming phone is set to optimal gps settings
-        //TODO show magic location settings dialog in PrimerActivity
 
         locationRequest = new LocationRequest()
                 .setInterval(2000) //2 seconds
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                finish();
+            }
+        });
     }
 
     private void onLocationError(){
