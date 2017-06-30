@@ -2,6 +2,8 @@ package com.groundspeak.rove;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Matrix;
+import android.graphics.Rect;
 import android.location.Location;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -25,6 +27,7 @@ public class MainActivity extends AppCompatActivity {
 
     public static final String EXTRA_TARGET_LAT = "MainActivity.TARGET_LATITUDE";
     public static final String EXTRA_TARGET_LNG = "MainActivity.TARGET_LONGITUDE";
+    public static final String EXTRA_RADIUS = "MainActivity.RADIUS"; //distance (meters) at which to show message
 
     public static Intent createIntent(Context context, LatLng target){
         Intent intent = new Intent(context, MainActivity.class);
@@ -72,6 +75,7 @@ public class MainActivity extends AppCompatActivity {
         locationClient = LocationServices.getFusedLocationProviderClient(this);
 
         //for now, assuming phone is set to optimal gps settings
+        //TODO show magic location settings dialog in PrimerActivity
 
         locationRequest = new LocationRequest()
                 .setInterval(2000) //2 seconds
@@ -90,6 +94,13 @@ public class MainActivity extends AppCompatActivity {
         double distance = SphericalUtil.computeDistanceBetween(userLatLng, targetLatLng);
 
         this.distance.setText(Util.getDistanceString(distance));
+
+        //TODO factor device rotation into arrow heading, instead of assuming device faces North
+        Matrix matrix = new Matrix();
+        Rect bounds = arrow.getDrawable().getBounds();
+        matrix.postRotate((float) SphericalUtil.computeHeading(userLatLng, targetLatLng), bounds.width()/2, bounds.height()/2);
+        arrow.setScaleType(ImageView.ScaleType.MATRIX);
+        arrow.setImageMatrix(matrix);
     }
 
     @Override
