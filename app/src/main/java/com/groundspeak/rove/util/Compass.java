@@ -10,18 +10,16 @@ import android.location.Location;
 import android.view.Surface;
 import android.view.WindowManager;
 
-/**
- * Used mysterious math magic to extract 2D device heading from various device sensors
- *
- * Modify only at your own peril
- */
 public class Compass {
+    // Heading = direction device is pointing, relative to North (clockwise)
+    // Bearing = direction to destination, relative to North (clockwise)
+    // Relative bearing = angle between Heading and Bearing (clockwise) (i.e. Bearing minus Heading)
 
     public interface CompassListener {
         /**
-         * @param bearing Bearing in degrees, Counterclockwise from North.
+         * @param heading Heading in degrees, clockwise from North
          */
-        void onBearingUpdate(float bearing);
+        void onHeadingUpdate(float heading);
     }
 
     private static final float LOW_PASS_ALPHA = 0.15f;
@@ -66,7 +64,7 @@ public class Compass {
                 SensorManager.remapCoordinateSystem(mRotationMatrix, x, y, fixedRotationMatrix);
                 SensorManager.getOrientation(fixedRotationMatrix, mOrientation);
 
-                listener.onBearingUpdate((float)(180 * mOrientation[0] / Math.PI));
+                listener.onHeadingUpdate((float)(180 * mOrientation[0] / Math.PI));
             }
         }
 
@@ -75,16 +73,16 @@ public class Compass {
     };
 
     /**
-     * Returns adjusted/more accurate bearing based on device's location on globe.
+     * Adjusts heading to account for variance between magnetic and polar/"True" north
      */
-    public static float adjustBearingForDeclination(float bearing, Location location) {
+    public static float adjustHeadingForDeclination(float heading, Location location) {
         float declination = 0;
         if (location != null) {
             GeomagneticField field = new GeomagneticField((float)location.getLatitude(), (float)location.getLongitude(), (float)location.getAltitude(), System.currentTimeMillis());
             declination = field.getDeclination();
         }
 
-        return bearing + declination;
+        return heading + declination;
     }
 
     private static float[] lowPass(float[] input, float[] output) {

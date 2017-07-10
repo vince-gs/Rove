@@ -6,9 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 public class PrimerActivity extends AppCompatActivity {
 
     //TODO Request location permission at runtime on API >= 21
-    //TODO show magic location settings dialog (if necessary) per
-    // https://developer.android.com/training/location/change-location-settings.html
-    // to ensure high-accuracy setting
+    //TODO show magic location settings dialog (if necessary)
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
