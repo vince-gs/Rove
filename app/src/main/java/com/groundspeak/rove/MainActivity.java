@@ -6,7 +6,7 @@ import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.location.Location;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import androidx.appcompat.app.AppCompatActivity;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -38,10 +38,10 @@ public class MainActivity extends AppCompatActivity {
         return intent;
     }
 
-    @BindView(R.id.compass_arrow) ImageView arrow;
-    @BindView(R.id.distance) TextView distance;
-    @BindView(R.id.status_message) TextView status;
-    @BindView(R.id.cancel_action) TextView cancel;
+    private ImageView arrow;
+    private TextView distance;
+    private TextView status;
+    private TextView cancel;
 
     private FusedLocationProviderClient locationClient;
     private LocationRequest locationRequest;
@@ -68,7 +68,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        ButterKnife.bind(this);
+
+        arrow = findViewById(R.id.compass_arrow);
+        distance = findViewById(R.id.distance);
+        status = findViewById(R.id.status_message);
+        cancel = findViewById(R.id.cancel_action);
 
         double lat = getIntent().getDoubleExtra(EXTRA_TARGET_LAT, 0);
         double lng = getIntent().getDoubleExtra(EXTRA_TARGET_LNG, 0);
